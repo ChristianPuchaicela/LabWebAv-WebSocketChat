@@ -1,0 +1,930 @@
+/* ============================================================
+   CHATWS - Hoja de estilos principal
+   ============================================================
+   Tabla de contenidos:
+     1. Variables CSS (tema claro / oscuro)
+     2. Reset y base
+     3. Tipografia
+     4. Pantalla de login
+     5. Estructura del chat (header, body, sidebar)
+     6. Burbujas de mensajes
+     7. Notificaciones del sistema
+     8. Barra de redaccion
+     9. Indicador de escritura
+    10. Indicador de conexion
+    11. Animaciones
+    12. Responsive
+   ============================================================ */
+
+/* ============================================================
+   1. VARIABLES CSS - TEMA CLARO (por defecto)
+   ============================================================ */
+:root {
+    --color-fondo: #f4f6fa;
+    --color-panel: #ffffff;
+    --color-burbuja-recibida: #e8edf5;
+    --color-burbuja-enviada: #c8f7dc;
+    --color-texto: #202b38;
+    --color-secundario: #8492a6;
+    --color-acento: #16a085;
+    --color-acento-hover: #128b73;
+    --color-borde: #e1e7ef;
+    --color-header: #ffffff;
+    --color-sidebar: #f8faff;
+    --color-notificacion: #f0f4fa;
+    --color-notificacion-texto: #6b7a90;
+    --color-sombra: rgba(0, 0, 0, 0.06);
+    --color-sombra-fuerte: rgba(0, 0, 0, 0.12);
+    --color-error: #e74c3c;
+    --color-conectado: #2ecc71;
+    --color-desconectado: #e74c3c;
+    --color-reconectando: #f39c12;
+    --color-enviado-texto: #1a3a2a;
+    --color-recibido-texto: #2d3748;
+    --radio-burbuja: 12px;
+    --radio-panel: 16px;
+    --transicion: 0.3s ease;
+}
+
+/* ============================================================
+   1b. VARIABLES CSS - TEMA OSCURO
+   ============================================================ */
+[data-theme="dark"] {
+    --color-fondo: #0f1620;
+    --color-panel: #1a2332;
+    --color-burbuja-recibida: #243044;
+    --color-burbuja-enviada: #1a4a3a;
+    --color-texto: #e2e8f0;
+    --color-secundario: #6b7a90;
+    --color-acento: #1abc9c;
+    --color-acento-hover: #16a085;
+    --color-borde: #2a3650;
+    --color-header: #1a2332;
+    --color-sidebar: #151c2a;
+    --color-notificacion: #1e2a40;
+    --color-notificacion-texto: #8b9bb5;
+    --color-sombra: rgba(0, 0, 0, 0.3);
+    --color-sombra-fuerte: rgba(0, 0, 0, 0.5);
+    --color-error: #e74c3c;
+    --color-enviado-texto: #d4f5e4;
+    --color-recibido-texto: #cbd5e0;
+}
+
+/* ============================================================
+   2. RESET Y BASE
+   ============================================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--color-fondo);
+    color: var(--color-texto);
+    transition: background-color var(--transicion), color var(--transicion);
+}
+
+/* Transicion suave al cambiar de tema */
+body, .chat-header, .login-card, .messages-container, .message-bar,
+.sidebar, .message-bubble, .notification, .typing-indicator,
+.reconnect-banner, .input-wrapper textarea {
+    transition: background-color var(--transicion), color var(--transicion), border-color var(--transicion);
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* ============================================================
+   3. TIPOGRAFIA
+   ============================================================ */
+h1, h2, h3 {
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+/* ============================================================
+   4. PANTALLA DE LOGIN
+   ============================================================ */
+.login-screen {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-fondo);
+    z-index: 100;
+}
+
+.login-card {
+    background: var(--color-panel);
+    border-radius: var(--radio-panel);
+    box-shadow: 0 8px 32px var(--color-sombra-fuerte);
+    padding: 48px 40px;
+    width: 90%;
+    max-width: 420px;
+    text-align: center;
+    animation: fadeInUp 0.5s ease;
+}
+
+.login-logo {
+    color: var(--color-acento);
+    margin-bottom: 16px;
+}
+
+.login-title {
+    font-size: 28px;
+    color: var(--color-texto);
+    margin-bottom: 4px;
+}
+
+.login-subtitle {
+    font-size: 14px;
+    color: var(--color-secundario);
+    margin-bottom: 32px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    text-align: left;
+}
+
+.form-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-secundario);
+}
+
+.form-input {
+    padding: 14px 16px;
+    border: 2px solid var(--color-borde);
+    border-radius: 10px;
+    font-size: 16px;
+    background: var(--color-fondo);
+    color: var(--color-texto);
+    outline: none;
+    transition: border-color var(--transicion);
+}
+
+.form-input:focus {
+    border-color: var(--color-acento);
+}
+
+.btn-login {
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    background: var(--color-acento);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background var(--transicion), transform var(--transicion);
+    margin-top: 8px;
+}
+
+.btn-login:hover {
+    background: var(--color-acento-hover);
+    transform: translateY(-1px);
+}
+
+.btn-login:active {
+    transform: translateY(0);
+}
+
+.login-error {
+    color: var(--color-error);
+    font-size: 13px;
+    min-height: 18px;
+    text-align: center;
+}
+
+/* --- Tabs de autenticacion (Login / Registro) --- */
+.auth-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 20px;
+    background: var(--color-fondo);
+    border-radius: 10px;
+    padding: 4px;
+}
+
+.auth-tab {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--color-secundario);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background var(--transicion), color var(--transicion);
+}
+
+.auth-tab.active {
+    background: var(--color-panel);
+    color: var(--color-acento);
+    box-shadow: 0 1px 4px var(--color-sombra);
+}
+
+/* --- Separador "o" --- */
+.auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0;
+    color: var(--color-secundario);
+    font-size: 13px;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--color-borde);
+}
+
+.auth-divider span {
+    padding: 0 4px;
+}
+
+/* --- Boton demo --- */
+.btn-demo {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid var(--color-borde);
+    border-radius: 10px;
+    background: transparent;
+    color: var(--color-secundario);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color var(--transicion), color var(--transicion);
+}
+
+.btn-demo:hover {
+    border-color: var(--color-acento);
+    color: var(--color-acento);
+}
+
+/* --- Boton de logout --- */
+.logout-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-secundario);
+    padding: 8px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    transition: color var(--transicion), background var(--transicion);
+}
+
+.logout-btn:hover {
+    color: var(--color-error);
+    background: var(--color-fondo);
+}
+
+/* ============================================================
+   5. ESTRUCTURA DEL CHAT
+   ============================================================ */
+.chat-screen {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* --- Barra superior --- */
+.chat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    background: var(--color-header);
+    border-bottom: 1px solid var(--color-borde);
+    box-shadow: 0 2px 8px var(--color-sombra);
+    z-index: 10;
+    flex-shrink: 0;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.app-logo {
+    color: var(--color-acento);
+    display: flex;
+    align-items: center;
+}
+
+.app-name {
+    font-size: 20px;
+    color: var(--color-texto);
+}
+
+.connection-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    transition: background-color var(--transicion);
+}
+
+.status-dot.connected {
+    background: var(--color-conectado);
+    box-shadow: 0 0 6px var(--color-conectado);
+}
+
+.status-dot.disconnected {
+    background: var(--color-desconectado);
+    box-shadow: 0 0 6px var(--color-desconectado);
+}
+
+.status-dot.reconnecting {
+    background: var(--color-reconectando);
+    box-shadow: 0 0 6px var(--color-reconectando);
+    animation: pulse 1s infinite;
+}
+
+.status-text {
+    color: var(--color-secundario);
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+/* --- Contador de usuarios --- */
+.users-counter {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: var(--color-fondo);
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-secundario);
+}
+
+.users-counter svg {
+    color: var(--color-acento);
+}
+
+#users-count {
+    color: var(--color-acento);
+    font-weight: 700;
+}
+
+.users-label {
+    font-size: 12px;
+    font-weight: 400;
+}
+
+/* --- Boton de tema --- */
+.theme-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-secundario);
+    padding: 8px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    transition: color var(--transicion), background var(--transicion);
+}
+
+.theme-toggle:hover {
+    color: var(--color-acento);
+    background: var(--color-fondo);
+}
+
+/* --- Cuerpo del chat --- */
+.chat-body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* --- Panel lateral --- */
+.sidebar {
+    width: 240px;
+    background: var(--color-sidebar);
+    border-right: 1px solid var(--color-borde);
+    padding: 20px 16px;
+    overflow-y: auto;
+    flex-shrink: 0;
+}
+
+.sidebar-title {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--color-secundario);
+    margin-bottom: 16px;
+}
+
+.users-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.users-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--color-texto);
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: var(--color-panel);
+    transition: background var(--transicion);
+}
+
+.users-list li:hover {
+    background: var(--color-fondo);
+}
+
+.user-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* --- Area central del chat --- */
+.chat-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+/* ============================================================
+   6. BURBUJAS DE MENSAJES
+   ============================================================ */
+.messages-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    scroll-behavior: smooth;
+}
+
+/* Scrollbar estilizado */
+.messages-container::-webkit-scrollbar,
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.messages-container::-webkit-scrollbar-track,
+.sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.messages-container::-webkit-scrollbar-thumb,
+.sidebar::-webkit-scrollbar-thumb {
+    background: var(--color-borde);
+    border-radius: 3px;
+}
+
+.messages-container::-webkit-scrollbar-thumb:hover,
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: var(--color-secundario);
+}
+
+/* --- Estado vacio --- */
+.empty-state {
+    margin: auto;
+    text-align: center;
+    color: var(--color-secundario);
+    padding: 40px;
+}
+
+.empty-state svg {
+    color: var(--color-borde);
+    margin-bottom: 16px;
+}
+
+.empty-state h3 {
+    font-size: 18px;
+    margin-bottom: 8px;
+    color: var(--color-secundario);
+}
+
+.empty-state p {
+    font-size: 14px;
+}
+
+/* --- Burbuja individual --- */
+.message-bubble {
+    max-width: 65%;
+    padding: 10px 16px;
+    border-radius: var(--radio-burbuja);
+    font-size: 15px;
+    line-height: 1.45;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    animation: messageSlideIn 0.3s ease;
+    position: relative;
+}
+
+/* Mensaje recibido (izquierda) */
+.message-bubble.received {
+    align-self: flex-start;
+    background: var(--color-burbuja-recibida);
+    color: var(--color-recibido-texto);
+    border-bottom-left-radius: 4px;
+}
+
+/* Mensaje enviado (derecha) */
+.message-bubble.sent {
+    align-self: flex-end;
+    background: var(--color-burbuja-enviada);
+    color: var(--color-enviado-texto);
+    border-bottom-right-radius: 4px;
+}
+
+/* Cabecera de la burbuja: nombre + hora */
+.message-header {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.message-username {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.message-time {
+    font-size: 11px;
+    color: var(--color-secundario);
+    margin-left: auto;
+    white-space: nowrap;
+}
+
+.message-text {
+    font-size: 15px;
+    word-break: break-word;
+}
+
+/* ============================================================
+   7. NOTIFICACIONES DEL SISTEMA
+   ============================================================ */
+.notification {
+    align-self: center;
+    background: var(--color-notificacion);
+    color: var(--color-notificacion-texto);
+    font-size: 13px;
+    padding: 6px 18px;
+    border-radius: 20px;
+    text-align: center;
+    margin: 4px 0;
+    animation: fadeIn 0.3s ease;
+    max-width: 80%;
+    text-align: center;
+}
+
+.notification .notif-time {
+    font-size: 11px;
+    color: var(--color-secundario);
+    margin-left: 6px;
+}
+
+/* ============================================================
+   8. BARRA DE REDACCION
+   ============================================================ */
+.message-bar {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    padding: 12px 20px;
+    background: var(--color-panel);
+    border-top: 1px solid var(--color-borde);
+    flex-shrink: 0;
+}
+
+.input-wrapper {
+    flex: 1;
+    position: relative;
+}
+
+.message-input {
+    width: 100%;
+    padding: 12px 16px;
+    padding-right: 90px; /* espacio para el contador */
+    border: 2px solid var(--color-borde);
+    border-radius: 12px;
+    font-size: 15px;
+    font-family: inherit;
+    background: var(--color-fondo);
+    color: var(--color-texto);
+    outline: none;
+    resize: none;
+    max-height: 120px;
+    line-height: 1.4;
+    transition: border-color var(--transicion);
+}
+
+.message-input:focus {
+    border-color: var(--color-acento);
+}
+
+.message-input::placeholder {
+    color: var(--color-secundario);
+}
+
+.char-counter {
+    position: absolute;
+    bottom: 10px;
+    right: 12px;
+    font-size: 11px;
+    color: var(--color-secundario);
+    pointer-events: none;
+}
+
+.char-counter.warning {
+    color: var(--color-reconectando);
+    font-weight: 600;
+}
+
+.char-counter.danger {
+    color: var(--color-error);
+    font-weight: 700;
+}
+
+/* --- Boton de envio --- */
+.send-btn {
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: 50%;
+    background: var(--color-acento);
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background var(--transicion), transform var(--transicion), opacity var(--transicion);
+}
+
+.send-btn:hover:not(:disabled) {
+    background: var(--color-acento-hover);
+    transform: scale(1.05);
+}
+
+.send-btn:active:not(:disabled) {
+    transform: scale(0.95);
+}
+
+.send-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* ============================================================
+   9. INDICADOR DE ESCRITURA
+   ============================================================ */
+.typing-indicator {
+    position: absolute;
+    top: 8px;
+    left: 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--color-panel);
+    padding: 6px 14px;
+    border-radius: 20px;
+    box-shadow: 0 2px 8px var(--color-sombra);
+    font-size: 13px;
+    color: var(--color-secundario);
+    z-index: 5;
+    animation: fadeIn 0.2s ease;
+}
+
+.typing-dots {
+    display: inline-flex;
+    gap: 3px;
+}
+
+.typing-dots span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-acento);
+    animation: typingBounce 1.4s infinite;
+}
+
+.typing-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+#typing-text {
+    font-style: italic;
+}
+
+/* ============================================================
+   10. BANNER DE RECONEXION
+   ============================================================ */
+.reconnect-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: var(--color-reconectando);
+    color: #fff;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 50;
+    animation: slideDown 0.3s ease;
+}
+
+.reconnect-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+/* ============================================================
+   11. ANIMACIONES
+   ============================================================ */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes messageSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+@keyframes typingBounce {
+    0%, 60%, 100% {
+        transform: translateY(0);
+        opacity: 0.4;
+    }
+    30% {
+        transform: translateY(-4px);
+        opacity: 1;
+    }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+/* ============================================================
+   12. RESPONSIVE
+   ============================================================ */
+
+/* Tablet: sidebar mas estrecho */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 200px;
+    }
+
+    .message-bubble {
+        max-width: 75%;
+    }
+
+    .messages-container {
+        padding: 16px;
+    }
+}
+
+/* Movil: sidebar oculto, diseno compacto */
+@media (max-width: 600px) {
+    .sidebar {
+        display: none;
+    }
+
+    .chat-header {
+        padding: 10px 12px;
+    }
+
+    .app-name {
+        font-size: 18px;
+    }
+
+    .users-counter {
+        padding: 4px 10px;
+        font-size: 13px;
+    }
+
+    .users-label {
+        display: none;
+    }
+
+    .message-bubble {
+        max-width: 85%;
+        font-size: 14px;
+    }
+
+    .message-bar {
+        padding: 10px 12px;
+        gap: 8px;
+    }
+
+    .message-input {
+        padding: 10px 14px;
+        padding-right: 70px;
+        font-size: 14px;
+    }
+
+    .send-btn {
+        width: 42px;
+        height: 42px;
+    }
+
+    .messages-container {
+        padding: 12px;
+    }
+
+    .login-card {
+        padding: 32px 24px;
+    }
+}
+
+/* Movil pequeño */
+@media (max-width: 380px) {
+    .message-bubble {
+        max-width: 90%;
+    }
+
+    .connection-status .status-text {
+        display: none;
+    }
+}
